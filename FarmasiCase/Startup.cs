@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FarmasiCase.Models;
+using FarmasiCase.Services;
 
 namespace FarmasiCase
 {
@@ -27,6 +29,11 @@ namespace FarmasiCase
         {
             services.AddControllers();
             services.AddSwaggerGen();
+            services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
+            services.Configure<DatabaseSettings>(Configuration.GetSection("DatabaseSettings"));
+            services.AddSingleton<ProductService>();
+           
+
 
             
         }
