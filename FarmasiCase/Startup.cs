@@ -12,6 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using FarmasiCase.Models;
 using FarmasiCase.Services;
+using FarmasiCase.Helpers;
+using Microsoft.AspNetCore.Authentication;
 
 namespace FarmasiCase
 {
@@ -27,15 +29,22 @@ namespace FarmasiCase
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            
+            //Swagger için
             services.AddSwaggerGen();
+            //Settings modelleri için Redis ve database Setting
             services.Configure<RedisSettings>(Configuration.GetSection("RedisSettings"));
             services.Configure<DatabaseSettings>(Configuration.GetSection("DatabaseSettings"));
+            //Aþagýdakiler servisler için 
             services.AddSingleton<ProductService>();
-           
 
+            services.AddSingleton<UserService>();
+            services.AddSingleton<BasketService>();
 
-            
+            services.AddAuthentication("BasicAuthentication")
+                .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -53,6 +62,7 @@ namespace FarmasiCase
             app.UseRouting();
 
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

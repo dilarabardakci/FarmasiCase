@@ -5,11 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using FarmasiCase.Services;
 using FarmasiCase.Models;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FarmasiCase.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProductController : ControllerBase
@@ -18,10 +20,8 @@ namespace FarmasiCase.Controllers
         public ProductController(ProductService service)
         {
             productService = service;
-
-
-
         }
+
         // GET: api/<ProductController>
         [HttpGet]
         public List<Product> Get()
@@ -50,8 +50,6 @@ namespace FarmasiCase.Controllers
         {
             Product newProduct = new Product(updatedData.name, updatedData.price);
             productService.Update(id,newProduct);
-           
-
         }
 
         // DELETE api/<ProductController>/5
