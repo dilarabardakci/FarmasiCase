@@ -19,7 +19,7 @@ namespace FarmasiCase.Controllers
         private readonly ProductService productService;
         public ProductController(ProductService service)
         {
-            productService = service;
+            productService = service; //readonly oldugu için bir kere set edilebilir bir daha initialize edilemez.
         }
 
         // GET: api/<ProductController>
