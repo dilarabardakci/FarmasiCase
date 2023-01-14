@@ -9,10 +9,6 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net.Http.Headers;
 using System.Text;
 
-
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace FarmasiCase.Controllers
 {
     [Authorize]
@@ -20,51 +16,71 @@ namespace FarmasiCase.Controllers
     [ApiController]
     public class BasketController : ControllerBase
     {
-        private readonly BasketService basketService;
-        private readonly UserService userService;
-        private readonly ProductService productService;
-        public BasketController(BasketService service,UserService kullaniciServisi,ProductService urunServisi)
+        private readonly BasketService _basketService;
+        private readonly UserService _userService;
+        private readonly ProductService _productService;
+        public BasketController(BasketService BasketService,UserService UserService,ProductService ProductService)
         {
-            basketService = service;
-            userService = kullaniciServisi;
-            productService = urunServisi;
+            _basketService = BasketService;
+            _userService = UserService;
+            _productService = ProductService;
         }
         // GET: api/<BasketController>
         [HttpGet]
         public async Task<List<Product>> Get()
         {
-            string kullaniciId = GetUserId();
-            string[] basket = await basketService.GetBasket(kullaniciId);
-            List<Product> urunler = new List<Product>();
+            string userId = GetUserId();
+            string[] basket = await _basketService.GetBasket(userId);
+            List<Product> products = new List<Product>();
             for (int i = 0; i < basket.Length; i++)
             {
-                urunler = urunler.Append<Product>(productService.GetById(basket[i])).ToList();
+                products = products.Append<Product>(_productService.GetById(basket[i])).ToList();
 
             }
-            return urunler;
+            return products;
         }
 
         // POST api/<BasketController>
         [HttpPost]
         public async Task<IActionResult> AddBasket(string productId)
         {
-            Product product = productService.GetById(productId);
+            Product product = _productService.GetById(productId);
             if (product== null)
             {
                 return BadRequest("ürün bulunamadı");
             }
-            string kullaniciId=GetUserId();
-            string[] basket = await basketService.GetBasket(kullaniciId);
-            await basketService.SetBasket(kullaniciId, basket.Append(productId).ToArray());
+            string userId=GetUserId();
+            string[] basket = await _basketService.GetBasket(userId);
+            await _basketService.SetBasket(userId, basket.Append(productId).ToArray());
             return Ok();
 
         }
 
         [HttpDelete]
-        public void Temizle()
+        public void ClearBasket()
         {
+            _basketService.ClearBasket(GetUserId());
+        }
 
-
+        [ProducesResponseType(typeof(List<Product>), 200)]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> deleteItem(string id)
+        {
+            string UserId = GetUserId();
+            string[] Basket = await _basketService.RemoveItem(UserId, id);
+            if (Basket == null)
+            {
+                return NotFound("Item could not found");
+            }
+            else
+            {
+                List<Product> products = new List<Product>();
+                for (int i = 0; i < Basket.Length; i++)
+                {
+                    products = products.Append<Product>(_productService.GetById(Basket[i])).ToList();
+                }
+                return Ok(products);
+            }
         }
 
         private string GetUserId()
@@ -74,11 +90,8 @@ namespace FarmasiCase.Controllers
             var credentials = Encoding.UTF8.GetString(credentialBytes).Split(new[] { ':' }, 2);
             var username = credentials[0];
             var password = credentials[1];
-            User user = userService.Authenticate(username, password);
+            User user = _userService.Authenticate(username, password);
             return user.Id;
         }
-
-     
-
     }
 }

@@ -10,12 +10,5 @@ namespace FarmasiCase.Models
         public string name { get; set; }
         public double price { get; set; }
 
-        public ProductRequest(string name, double price)
-        {
-            this.name = name;
-            this.price = price;
-
-        }
-
     }
 }

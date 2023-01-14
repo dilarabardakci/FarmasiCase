@@ -21,7 +21,7 @@ namespace FarmasiCase.Services
             _redisDb = _redis.GetDatabase();
         }
 
-        public async Task<string?> GetString (string key)
+        public async Task<string> GetString (string key)
         {
             return await _redisDb.StringGetAsync(key);
         } 
@@ -43,6 +43,25 @@ namespace FarmasiCase.Services
                 return new string[] { }; //Bos string array olusturulması
             }
             return JsonSerializer.Deserialize<string[]>(response);
+        }
+        public void ClearBasket (string userId)
+        {
+            _redisDb.KeyDelete(userId);
+        }
+        public async Task <string[]> RemoveItem (string userId, string productId)
+        {
+            string[] basket = await GetBasket(userId);
+            if (basket.Contains<string>(productId))
+            {
+                List<string> NewBasket = basket.ToList();
+                NewBasket.Remove(productId);
+                await SetBasket(userId,NewBasket.ToArray());
+                return NewBasket.ToArray();
+            }
+            else
+            {
+                return null;
+            }
         }
             
 

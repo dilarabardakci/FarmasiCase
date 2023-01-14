@@ -7,8 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using FarmasiCase.Models;
 using FarmasiCase.Services;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace FarmasiCase.Controllers
 {
     [Authorize]
@@ -16,16 +14,17 @@ namespace FarmasiCase.Controllers
     [Route("api/[controller]")]
     public class UsersController : ControllerBase
     {
-        private UserService _userService;
+        private readonly UserService _userService;
 
-        public UsersController(UserService userService)
+        public UsersController(UserService UserService)
         {
-            _userService = userService;
+            _userService = UserService;
         }
         
+        [ProducesResponseType(typeof(User), 200)]
         [AllowAnonymous]
-        [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody] AuthenticateModel model)
+        [HttpPost("Authenticate")]
+        public IActionResult Authenticate([FromBody] AuthenticateModel model)
         {
             var user = _userService.Authenticate(model.Username, model.Password);
 
@@ -33,6 +32,24 @@ namespace FarmasiCase.Controllers
                 return BadRequest(new { message = "Username or password is incorrect" });
 
             return Ok(user);
+        }
+
+        [ProducesResponseType(typeof(User), 200)]
+        [AllowAnonymous]
+        [HttpPost("Register")]
+        public IActionResult Register([FromBody] AuthenticateModel model)
+        {
+            var user = _userService.Register(model.Username, model.Password);//servisten eşitliği kontrol ettigini anlıyoruz
+            if (user == null)
+            {
+                return BadRequest("Username already exist");
+
+            }
+            else
+            {
+                return Ok(user);
+            }
+
         }
 
     }
