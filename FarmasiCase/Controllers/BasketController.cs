@@ -19,11 +19,11 @@ namespace FarmasiCase.Controllers
         private readonly BasketService _basketService;
         private readonly UserService _userService;
         private readonly ProductService _productService;
-        public BasketController(BasketService BasketService,UserService UserService,ProductService ProductService)
+        public BasketController(BasketService basketService,UserService userService,ProductService productService)
         {
-            _basketService = BasketService;
-            _userService = UserService;
-            _productService = ProductService;
+            _basketService = basketService;
+            _userService = userService;
+            _productService = productService;
         }
         // GET: api/<BasketController>
         [HttpGet]
@@ -64,7 +64,7 @@ namespace FarmasiCase.Controllers
 
         [ProducesResponseType(typeof(List<Product>), 200)]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> deleteItem(string id)
+        public async Task<IActionResult> DeleteItem(string id)
         {
             string UserId = GetUserId();
             string[] Basket = await _basketService.RemoveItem(UserId, id);

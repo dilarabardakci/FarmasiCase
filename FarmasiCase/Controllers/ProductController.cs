@@ -15,9 +15,9 @@ namespace FarmasiCase.Controllers
     public class ProductController : ControllerBase
     {
         private readonly ProductService _productService;
-        public ProductController(ProductService ProductService)
+        public ProductController(ProductService productService)
         {
-            _productService = ProductService; //readonly oldugu için bir kere set edilebilir bir daha initialize edilemez.
+            _productService = productService; //readonly oldugu için bir kere set edilebilir bir daha initialize edilemez.
         }
 
         // GET: api/<ProductController>
@@ -56,7 +56,6 @@ namespace FarmasiCase.Controllers
         public void Delete(string Id)
         {
             _productService.Delete(Id);
-
         }
     }
 }

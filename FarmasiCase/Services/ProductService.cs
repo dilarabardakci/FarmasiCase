@@ -20,7 +20,7 @@ namespace FarmasiCase.Services
 
         public List<Product> Get()
         {
-            return Products.Find(FilterDefinition<Product>.Empty).ToList(); //Listeyi donduk
+            return Products.Find(FilterDefinition<Product>.Empty).ToList(); 
         }
 
         public Product GetById(string id)
