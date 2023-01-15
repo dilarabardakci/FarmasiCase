@@ -13,9 +13,9 @@ namespace FarmasiCase.Services
 
         private readonly IMongoCollection<User> UserCollection;
 
-        public UserService(IOptions<DatabaseSettings> settings)
+        public UserService(DatabaseService service)
         {
-            UserCollection = new MongoClient(settings.Value.ConnectionString).GetDatabase(settings.Value.DatabaseName).GetCollection<User>("UserCollection");
+            UserCollection =service.GetCollection<User>("Users");
         }
 
         public User Authenticate(string username,string password)

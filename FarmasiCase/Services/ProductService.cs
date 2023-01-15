@@ -13,9 +13,9 @@ namespace FarmasiCase.Services
 
         private readonly IMongoCollection<Product> Products;
 
-        public ProductService(IOptions<DatabaseSettings> settings)
+        public ProductService(DatabaseService service)
         {
-            Products = new MongoClient(settings.Value.ConnectionString).GetDatabase(settings.Value.DatabaseName).GetCollection<Product>("Products");
+            Products = service.GetCollection<Product>("Products");
         }
 
         public List<Product> Get()
