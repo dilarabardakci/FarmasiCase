@@ -12,13 +12,9 @@ namespace FarmasiCase.Services
     public class BasketService
     {
         private readonly IDatabase _redisDb;
-        public BasketService(IOptions<RedisSettings> setting)
+        public BasketService(RedisService service)
         {
-            var _redis = ConnectionMultiplexer.Connect(new ConfigurationOptions
-            {
-                EndPoints = {setting.Value.ConnectionString}
-            });
-            _redisDb = _redis.GetDatabase();
+            _redisDb = service.GetDatabase();
         }
 
         public async Task<string> GetString (string key)

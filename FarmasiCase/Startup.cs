@@ -28,6 +28,7 @@ namespace FarmasiCase
             services.Configure<DatabaseSettings>(Configuration.GetSection("DatabaseSettings"));
 
             services.AddSingleton<DatabaseService>();
+            services.AddSingleton<RedisService>();
             services.AddSingleton<ProductService>();
             services.AddSingleton<UserService>();
             services.AddSingleton<BasketService>();
