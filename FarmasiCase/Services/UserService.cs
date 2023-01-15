@@ -11,29 +11,29 @@ namespace FarmasiCase.Services
     public class UserService
     {
 
-        private readonly IMongoCollection<User> Users;
+        private readonly IMongoCollection<User> UserCollection;
 
         public UserService(IOptions<DatabaseSettings> settings)
         {
-            Users = new MongoClient(settings.Value.ConnectionString).GetDatabase(settings.Value.DatabaseName).GetCollection<User>("Users");
+            UserCollection = new MongoClient(settings.Value.ConnectionString).GetDatabase(settings.Value.DatabaseName).GetCollection<User>("UserCollection");
         }
 
         public User Authenticate(string username,string password)
         {
             //Empty kullanimi: bir filtre koymuyorsun
-            List<User> kullanicilar = Users.Find(FilterDefinition<User>.Empty).ToList();
+            List<User> users = UserCollection.Find(FilterDefinition<User>.Empty).ToList();
             //singleofDefault find ve firstordefaultun birleşmiş hali diye dusunebliriz
-            User kullanici = kullanicilar.SingleOrDefault(u => u.username == username && u.password == password);
-            return kullanici;
+            User user = users.SingleOrDefault(u => u.username == username && u.password == password);
+            return user;
         }
 
         public User Register (string username,string password)
         {
-            List<User> _users = Users.Find(FilterDefinition<User>.Empty).ToList();
+            List<User> _users = UserCollection.Find(FilterDefinition<User>.Empty).ToList();
             var user = _users.SingleOrDefault(u => u.username == username);
             if (user==null)
             {
-                Users.InsertOne(new User(username, password));
+                UserCollection.InsertOne(new User(username, password));
                 return Authenticate(username, password);
             }
             else
